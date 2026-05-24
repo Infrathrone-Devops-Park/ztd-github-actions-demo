@@ -1,0 +1,14 @@
+name: Caller
+
+# Demonstrates calling a reusable workflow (the GitHub Actions
+# equivalent of a Jenkins shared library).
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  call-build:
+    uses: ./.github/workflows/reusable-build.yml
+    with:
+      python-version: "3.12"

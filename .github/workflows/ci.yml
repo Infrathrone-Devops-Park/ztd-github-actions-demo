@@ -1,0 +1,43 @@
+name: CI
+
+# Runs on every push and on pull requests targeting main.
+on:
+  push:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip                       # cache the pip download dir, keyed on requirements.txt
+      - run: pip install -r requirements.txt
+      - name: flake8
+        run: flake8 app tests --max-line-length=100
+
+  test:
+    needs: lint                            # wait for lint to pass first
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Run tests
+        run: pytest -v --junitxml=report-${{ matrix.python }}.xml
+      - name: Upload test report
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report-${{ matrix.python }}
+          path: report-${{ matrix.python }}.xml
