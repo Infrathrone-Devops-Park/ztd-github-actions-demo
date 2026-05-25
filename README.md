@@ -1,9 +1,8 @@
 # ZTD — GitHub Actions Demo
 
-Teaching repository for **Zero to DevOps Engineer — Phase 3, Week 6 (GitHub Actions)**.
+Teaching repository for GitHub Actions.
 
-A tiny Python calculator wired up with the full set of Week-6 workflow constructs,
-so every lecture demo has a live, green reference.
+A tiny Python calculator wired up with the full set of workflow constructs,
 
 ## What's here
 
