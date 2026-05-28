@@ -1,0 +1,35 @@
+name: 17 · Manual Dispatch with Inputs
+
+# Adds a "Run workflow" form in the Actions tab with typed inputs:
+# choice (dropdown), string, boolean.
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Where to deploy"
+        type: choice
+        required: true
+        default: staging
+        options: [staging, production]
+      version:
+        description: "Version tag (e.g. v1.2.3)"
+        type: string
+        required: true
+      dry-run:
+        description: "If true, just print the plan"
+        type: boolean
+        default: true
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo inputs
+        run: |
+          echo "environment = ${{ inputs.environment }}"
+          echo "version     = ${{ inputs.version }}"
+          echo "dry-run     = ${{ inputs.dry-run }}"
+
+      - name: Apply (only if dry-run = false)
+        if: ${{ inputs.dry-run == false }}
+        run: echo "would deploy ${{ inputs.version }} to ${{ inputs.environment }}"
