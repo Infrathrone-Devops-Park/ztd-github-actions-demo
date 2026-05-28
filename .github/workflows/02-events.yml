@@ -1,0 +1,28 @@
+name: 02 · Events
+
+# Showcases multiple triggers on one workflow.
+# - push to any branch (with path + branch filters)
+# - pull_request targeting main
+# - schedule (cron, UTC)
+# - workflow_dispatch (manual button)
+on:
+  push:
+    branches: ["main", "feature/**"]
+    paths:
+      - "app/**"
+      - ".github/workflows/02-events.yml"
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "17 2 * * *"        # 02:17 UTC every day — drift the minute to avoid GH-wide bursts
+  workflow_dispatch:
+
+jobs:
+  show-trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print the event that triggered this run
+        run: |
+          echo "event_name = ${{ github.event_name }}"
+          echo "ref        = ${{ github.ref }}"
+          echo "actor      = ${{ github.actor }}"

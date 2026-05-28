@@ -1,0 +1,34 @@
+name: 13 · Caching (actions/cache)
+
+# Caches the pip wheel cache, keyed on the hash of requirements.txt.
+# A second run on the same key is a cache HIT and skips the pip download.
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "requirements.txt"
+      - ".github/workflows/13-caching.yml"
+
+jobs:
+  cached-install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Restore pip cache
+        id: pip-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ runner.os }}-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            pip-${{ runner.os }}-
+
+      - name: Install
+        run: pip install -r requirements.txt
+
+      - name: Show cache outcome
+        run: echo "cache-hit = ${{ steps.pip-cache.outputs.cache-hit }}"

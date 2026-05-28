@@ -1,0 +1,32 @@
+name: 05 · Conditionals (`if:`)
+
+# Shows step-level and job-level `if:` and the `always() / success() / failure()` status functions.
+on:
+  workflow_dispatch:
+  push:
+    paths: [".github/workflows/05-conditionals.yml"]
+
+jobs:
+  conditional:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Runs only on the main branch
+        if: github.ref == 'refs/heads/main'
+        run: echo "we are on main"
+
+      - name: Runs only on manual dispatch
+        if: github.event_name == 'workflow_dispatch'
+        run: echo "you clicked the Run button"
+
+      - name: Intentional failure
+        id: bad
+        run: exit 1
+        continue-on-error: true        # let the workflow continue so the cleanup step demonstrates always()
+
+      - name: Cleanup that ALWAYS runs
+        if: always()
+        run: echo "cleanup ran — always() ignores the previous failure"
+
+      - name: Runs only if a prior step failed
+        if: failure()
+        run: echo "(would run if continue-on-error were not set)"

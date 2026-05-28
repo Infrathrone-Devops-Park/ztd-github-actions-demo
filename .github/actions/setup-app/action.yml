@@ -1,0 +1,25 @@
+name: "Set up app"
+description: "Checkout-less composite that installs Python deps and exports BUILD_ID. Call AFTER actions/checkout."
+inputs:
+  python-version:
+    description: "Python version to install"
+    required: false
+    default: "3.12"
+outputs:
+  build-id:
+    description: "Synthetic build id for this run"
+    value: ${{ steps.gen.outputs.build-id }}
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+        cache: pip
+    - name: Install requirements
+      shell: bash
+      run: pip install -r requirements.txt
+    - name: Generate build id
+      id: gen
+      shell: bash
+      run: echo "build-id=app-${{ github.run_id }}-${{ inputs.python-version }}" >> "$GITHUB_OUTPUT"

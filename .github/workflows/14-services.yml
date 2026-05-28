@@ -1,0 +1,32 @@
+name: 14 · Service Containers (Postgres)
+
+# A Postgres container is started on the runner; the job connects to it on localhost.
+# Use for integration tests that need a real database.
+on:
+  workflow_dispatch:
+  push:
+    paths: [".github/workflows/14-services.yml"]
+
+jobs:
+  db-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: ci-only-password
+          POSTGRES_DB: demo
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - name: Wait + smoke query
+        env:
+          PGPASSWORD: ci-only-password
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client
+          psql -h 127.0.0.1 -U postgres -d demo -c 'SELECT version();'

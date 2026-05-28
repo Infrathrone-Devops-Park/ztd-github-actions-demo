@@ -1,0 +1,16 @@
+name: 18 · Scheduled (cron)
+
+# Scheduled workflows run on the DEFAULT branch only.
+# Cron syntax is standard 5-field UTC.
+on:
+  schedule:
+    - cron: "0 6 * * 1-5"        # 06:00 UTC, Mon–Fri
+  workflow_dispatch:
+
+jobs:
+  daily:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "Scheduled run at $(date -u)"
+          echo "Use this pattern for nightly tests, dependency audits, or stale-issue sweepers."

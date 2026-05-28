@@ -1,0 +1,34 @@
+name: 08 · Matrix (include / exclude / fail-fast)
+
+# Cartesian product with overrides:
+#   os    × python  → 2 × 3 = 6 cells
+#   exclude removes (ubuntu, 3.10)                                    → 5 cells
+#   include adds (macos, 3.12) with an extra "experimental" flag      → 6 cells
+on:
+  workflow_dispatch:
+  push:
+    paths: [".github/workflows/08-matrix.yml"]
+
+jobs:
+  matrix:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ["3.10", "3.11", "3.12"]
+        exclude:
+          - os: ubuntu-latest
+            python: "3.10"
+        include:
+          - os: macos-latest
+            python: "3.12"
+            experimental: true
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Show this cell
+        run: |
+          echo "os=${{ matrix.os }}  python=${{ matrix.python }}  experimental=${{ matrix.experimental || 'false' }}"
+          python --version

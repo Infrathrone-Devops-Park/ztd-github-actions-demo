@@ -1,0 +1,21 @@
+name: 15 · Concurrency (cancel-in-progress)
+
+# Two rapid pushes to the same branch: the older run is cancelled the moment the
+# newer one starts. Prevents wasted minutes on superseded commits.
+on:
+  workflow_dispatch:
+  push:
+    paths: [".github/workflows/15-concurrency.yml"]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  slow:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "long task starting..."
+          for i in $(seq 1 30); do echo "tick $i"; sleep 2; done
+          echo "long task done"

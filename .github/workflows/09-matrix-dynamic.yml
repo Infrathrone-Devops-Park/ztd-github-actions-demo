@@ -1,0 +1,30 @@
+name: 09 · Dynamic Matrix (generated at runtime)
+
+# Build the matrix axis from a previous job's JSON output.
+# Use when the set of cells is data-driven (e.g. "test every service folder").
+on:
+  workflow_dispatch:
+  push:
+    paths: [".github/workflows/09-matrix-dynamic.yml"]
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    outputs:
+      versions: ${{ steps.gen.outputs.versions }}
+    steps:
+      - id: gen
+        # Emit a compact JSON array. The matrix consumer needs valid JSON.
+        run: echo 'versions=["3.10","3.11","3.12"]' >> "$GITHUB_OUTPUT"
+
+  test:
+    needs: discover
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ${{ fromJSON(needs.discover.outputs.versions) }}
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python --version

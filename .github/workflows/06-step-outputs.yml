@@ -1,0 +1,28 @@
+name: 06 · Step Outputs ($GITHUB_OUTPUT / $GITHUB_ENV)
+
+# Two ways for one step to pass a value to a later step in the SAME job.
+on:
+  workflow_dispatch:
+  push:
+    paths: [".github/workflows/06-step-outputs.yml"]
+
+jobs:
+  pass-values:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Produce an output
+        id: producer
+        run: |
+          echo "version=1.2.3" >> "$GITHUB_OUTPUT"
+          echo "sha=$(echo deadbeef | head -c 7)" >> "$GITHUB_OUTPUT"
+
+      - name: Consume the output
+        run: |
+          echo "version  = ${{ steps.producer.outputs.version }}"
+          echo "short-sha = ${{ steps.producer.outputs.sha }}"
+
+      - name: Export to env for later steps
+        run: echo "BUILD_TAG=v${{ steps.producer.outputs.version }}-${{ steps.producer.outputs.sha }}" >> "$GITHUB_ENV"
+
+      - name: Use the exported env
+        run: echo "BUILD_TAG=$BUILD_TAG"

@@ -1,0 +1,33 @@
+name: 03 · Jobs DAG (parallel + needs)
+
+# Demonstrates that jobs run in parallel by default, and how `needs:` builds a DAG.
+#   build1 ─┐
+#           ├──> integrate ──> report
+#   build2 ─┘
+on:
+  workflow_dispatch:
+  push:
+    paths: [".github/workflows/03-jobs-dag.yml"]
+
+jobs:
+  build1:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "build1 doing work" && sleep 3
+
+  build2:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "build2 doing work" && sleep 3
+
+  integrate:
+    needs: [build1, build2]
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "integrate — runs only after BOTH builds succeed"
+
+  report:
+    needs: integrate
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "report — the tail of the DAG"

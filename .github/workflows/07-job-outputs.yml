@@ -1,0 +1,22 @@
+name: 07 · Job Outputs
+
+# Pass values BETWEEN jobs via `outputs:` + `needs:`.
+on:
+  workflow_dispatch:
+  push:
+    paths: [".github/workflows/07-job-outputs.yml"]
+
+jobs:
+  produce:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.set.outputs.tag }}
+    steps:
+      - id: set
+        run: echo "tag=build-$(date +%s)" >> "$GITHUB_OUTPUT"
+
+  consume:
+    needs: produce
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Tag from previous job = ${{ needs.produce.outputs.tag }}"

@@ -1,0 +1,31 @@
+name: 04 · Contexts & Expressions
+
+# Dumps every context object GitHub injects into a workflow run.
+# Use this to teach what `${{ ... }}` can reference.
+on:
+  workflow_dispatch:
+
+jobs:
+  dump:
+    runs-on: ubuntu-latest
+    steps:
+      - name: github context
+        env:
+          GH_CTX: ${{ toJSON(github) }}
+        run: echo "$GH_CTX" | head -40
+
+      - name: env context
+        env:
+          ENV_CTX: ${{ toJSON(env) }}
+        run: echo "$ENV_CTX"
+
+      - name: runner context
+        env:
+          RUNNER_CTX: ${{ toJSON(runner) }}
+        run: echo "$RUNNER_CTX"
+
+      - name: expressions
+        run: |
+          echo "uppercased event: ${{ toJSON(github.event_name) }}"
+          echo "is main? ${{ github.ref == 'refs/heads/main' }}"
+          echo "actor length test: ${{ contains(github.actor, 'Pisey') }}"

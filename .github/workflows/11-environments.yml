@@ -1,0 +1,21 @@
+name: 11 · Environments & Approvals
+
+# Requires a GitHub Environment named "production" with required reviewers configured.
+# The deploy job will pause for manual approval before running.
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "build complete"
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://example.invalid
+    steps:
+      - run: echo "deploying to production (gated by environment reviewers)"

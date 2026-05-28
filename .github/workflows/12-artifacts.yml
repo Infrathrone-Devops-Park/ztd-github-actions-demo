@@ -1,0 +1,34 @@
+name: 12 · Artifacts (upload + download across jobs)
+
+on:
+  workflow_dispatch:
+  push:
+    paths: [".github/workflows/12-artifacts.yml"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Produce a build output
+        run: |
+          mkdir -p out
+          echo "build at $(date -u)" > out/build.txt
+          tar -czf out/build.tgz out/build.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: out/build.tgz
+          retention-days: 1
+
+  consume:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-output
+          path: downloaded
+      - run: |
+          ls -la downloaded
+          tar -xzf downloaded/build.tgz
+          cat out/build.txt
