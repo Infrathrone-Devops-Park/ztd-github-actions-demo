@@ -1,7 +1,7 @@
 name: 04 · Contexts & Expressions
 
 # Dumps every context object GitHub injects into a workflow run.
-# Use this to teach what `${{ ... }}` can reference.
+
 on:
   workflow_dispatch:
 
