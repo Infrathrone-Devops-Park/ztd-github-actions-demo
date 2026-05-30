@@ -1,0 +1,32 @@
+name: 21 · Step Summary (rich job report)
+
+# Anything written to $GITHUB_STEP_SUMMARY is rendered as Markdown on the run page.
+# Use this for human-readable build reports, test tables, deploy plans.
+on:
+  workflow_dispatch:
+  push:
+    paths: [".github/workflows/21-step-summary.yml"]
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Write a Markdown summary
+        run: |
+          {
+            echo "# Build report"
+            echo ""
+            echo "| Metric | Value |"
+            echo "|---|---|"
+            echo "| Commit | \`${GITHUB_SHA::7}\` |"
+            echo "| Actor  | ${GITHUB_ACTOR} |"
+            echo "| Files  | $(find app -type f | wc -l) |"
+            echo "| Date   | $(date -u) |"
+            echo ""
+            echo "## Test plan"
+            echo "- [x] unit tests"
+            echo "- [x] lint"
+            echo "- [ ] integration tests (TODO)"
+          } >> "$GITHUB_STEP_SUMMARY"

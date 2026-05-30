@@ -1,0 +1,27 @@
+name: 24 · SHA Pinning (supply-chain hardening)
+
+# Three ways to reference an action — increasing in security:
+#   @main        — moving branch: anyone with write access to the action repo
+#                  can change what runs in YOUR workflow. NEVER use in prod.
+#   @v4          — major-version tag: convenient, but tags are mutable.
+#                  Author can re-point v4 at new code.
+#   @<full-sha>  — immutable: the code that runs is bit-for-bit fixed.
+on:
+  workflow_dispatch:
+  push:
+    paths: [".github/workflows/24-sha-pinning.yml"]
+
+jobs:
+  pinned:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Floating tag (convenient, less safe)
+      - uses: actions/checkout@v4
+
+      # 2. Full commit SHA (supply-chain safe)
+      #    SHA below pins actions/setup-python at the v5.2.0 release.
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b   # v5.2.0
+        with:
+          python-version: "3.12"
+
+      - run: python --version

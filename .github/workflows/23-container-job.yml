@@ -1,0 +1,22 @@
+name: 23 · Container Job
+
+# Run every step INSIDE a container image instead of on the runner host.
+# Pin the image. Useful for reproducible toolchains across teams.
+on:
+  workflow_dispatch:
+  push:
+    paths: [".github/workflows/23-container-job.yml"]
+
+jobs:
+  inside-container:
+    runs-on: ubuntu-latest
+    container:
+      image: python:3.12-slim
+      options: --user 1001
+    steps:
+      - name: Where am I
+        run: |
+          echo "uname: $(uname -a)"
+          echo "python: $(python --version)"
+          echo "id: $(id)"
+          cat /etc/os-release | head -3

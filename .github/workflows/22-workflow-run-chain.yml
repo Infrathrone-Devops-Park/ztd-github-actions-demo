@@ -1,0 +1,26 @@
+name: 22 · workflow_run chain (downstream)
+
+# Fires AFTER workflow "01 · Hello World" finishes (success or failure).
+# Use to chain workflows when the upstream is in this OR another repo.
+on:
+  workflow_run:
+    workflows: ["01 · Hello World"]
+    types: [completed]
+
+jobs:
+  react:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show what triggered us
+        run: |
+          echo "Upstream workflow: ${{ github.event.workflow_run.name }}"
+          echo "Conclusion:        ${{ github.event.workflow_run.conclusion }}"
+          echo "Run URL:           ${{ github.event.workflow_run.html_url }}"
+
+      - name: Branch based on upstream result
+        run: |
+          if [[ "${{ github.event.workflow_run.conclusion }}" == "success" ]]; then
+            echo "Upstream green — could deploy here"
+          else
+            echo "Upstream failed — could open an issue here"
+          fi

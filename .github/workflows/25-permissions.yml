@@ -1,0 +1,25 @@
+name: 25 · GITHUB_TOKEN & Permissions
+
+# GITHUB_TOKEN is an auto-minted secret scoped to this repo and this run.
+# `permissions:` shrinks (or grows) what that token can do.
+# Best practice: start with `permissions: {}` (deny all) and grant per-job.
+on:
+  workflow_dispatch:
+
+permissions: {}      # default = no access for any job
+
+jobs:
+  label-pr:
+    runs-on: ubuntu-latest
+    # This job is allowed to read PRs and write labels — nothing else.
+    permissions:
+      pull-requests: write
+      contents: read
+    steps:
+      - name: Show token capabilities
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # The token is the same shape as a PAT; gh CLI accepts it.
+          # We are NOT calling any privileged endpoint — just listing repo metadata.
+          gh repo view ${{ github.repository }} --json name,visibility,defaultBranchRef
