@@ -1,8 +1,7 @@
 name: 19 · Self-hosted Runner
 
-# Runs on a runner you provisioned (see the lecture's "Self-hosted runner" section
-# for the AWS infrathrone EC2 setup).
 # Requires a runner registered with labels `self-hosted, linux, ztd-lab`.
+
 on:
   workflow_dispatch:
 
