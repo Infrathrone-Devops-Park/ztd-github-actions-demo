@@ -7,7 +7,7 @@ on:
 
 jobs:
   on-self-hosted:
-    runs-on: [self-hosted, linux, ztd-lab]
+    runs-on: [self-hosted, Linux, ztd-lab]
     steps:
       - name: Show host
         run: |
