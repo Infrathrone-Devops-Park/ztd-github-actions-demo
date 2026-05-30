@@ -26,4 +26,4 @@ jobs:
           echo "event_name = ${{ github.event_name }}"
           echo "ref        = ${{ github.ref }}"
           echo "actor      = ${{ github.actor }}"
-          echo "test"
+          echo "test hello world"
