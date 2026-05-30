@@ -1,7 +1,7 @@
 name: 20 · OIDC → AWS (no long-lived keys)
 
 # Federates a hosted runner to an IAM role via OIDC.
-# REQUIRES a one-time AWS setup (see the lecture's OIDC section):
+# REQUIRES a one-time AWS setup:
 #   1. Create an OIDC provider for token.actions.githubusercontent.com in AWS.
 #   2. Create an IAM role trusting that provider, scoped to this repo.
 #   3. Set repo variable AWS_ROLE_ARN to the role ARN.
